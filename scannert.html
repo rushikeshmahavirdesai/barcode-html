@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vite App</title>
+</head>
+
+<body>
+  <video id="stream" style="width: 100vw; height: 100vh;" />
+  <script>
+    (async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: {
+            ideal: "environment"
+          }
+        },
+        audio: false
+      });
+      const videoEl = document.querySelector("#stream");
+      videoEl.srcObject = stream;
+      await videoEl.play();
+
+      const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+      window.setInterval(async () => {
+        const barcodes = await barcodeDetector.detect(videoEl);
+        if (barcodes.length <= 0) return;
+        alert(barcodes.map(barcode => barcode.rawValue));
+      }, 1000)
+    })();
+
+  </script>
+</body>
+
+</html>
